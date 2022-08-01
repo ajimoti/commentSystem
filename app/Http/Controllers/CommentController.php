@@ -7,6 +7,7 @@ use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\CreateRepliesRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\CommentCollection;
+use App\Http\Resources\ReplyResource;
 
 class CommentController extends Controller
 {
@@ -40,5 +41,19 @@ class CommentController extends Controller
         $comment = $this->model->create($request->validated());
 
         return json(['comment' => new CommentResource($comment)], 'comment created');
+    }
+
+    /**
+     * Create a reply for the specified comment.
+     *
+     * @param  \App\Comment  $comment
+     * @param  \App\Requests\CreateRepliesRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function createReply(Comment $comment, CreateRepliesRequest $request)
+    {
+        $reply = $comment->replies()->create($request->validated());
+
+        return json(['reply' => new ReplyResource($reply)], 'reply created');
     }
 }

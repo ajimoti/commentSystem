@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/comments', 'CommentController@index');
 Route::post('/comments', 'CommentController@create');
+Route::post('/comments/replies', 'CommentController@createReply');
 
 Route::get('/replies', 'CommentController@index');
 Route::post('/replies', 'CommentController@create');

@@ -32,15 +32,19 @@ class ReplyController extends Controller
     }
 
     /**
-     * Create a reply for the specified comment.
+     * Create a reply for the specified reply.
      *
-     * @param  \App\Comment  $comment
+     * @param  \App\Reply  $reply
      * @param  \App\Requests\CreateRepliesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function create(Comment $comment, CreateRepliesRequest $request)
+    public function create(Reply $reply, CreateRepliesRequest $request)
     {
-        $reply = $comment->replies()->create($request->validated());
+        if ($reply->comment->comment) {
+            return message("You cannot reply a sub reply", 400);
+        }
+
+        $reply = $reply->replies()->create($request->validated());
 
         return json(['reply' => new ReplyResource($reply)], 'reply created');
     }
