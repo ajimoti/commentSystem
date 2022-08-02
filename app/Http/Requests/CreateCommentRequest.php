@@ -25,7 +25,7 @@ class CreateCommentRequest extends FormRequest
     {
         return [
             'user_name' => 'required|string|min:2|max:255',
-            'body' => 'required|min:1|max:500',
+            'body' => 'required|min:3|max:500',
         ];
     }
 }

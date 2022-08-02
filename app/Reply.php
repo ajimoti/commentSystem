@@ -26,13 +26,33 @@ class Reply extends Model
     }
 
     /**
+     * Parent Reply
+     *
+     * @return BelongsTo
+     */
+    public function parentReply()
+    {
+        return $this->belongsTo(Reply::class, 'parent_id');
+    }
+
+    /**
      * Replies
      *
      * @return BelongsTo
      */
-    public function replies()
+    public function subReplies()
     {
         return $this->hasMany(Reply::class, 'parent_id');
+    }
+
+    /**
+     * Checks if the reply is at the third layer
+     *
+     * @return bool
+     */
+    public function isSubReply() 
+    {
+        return ! empty($this->parentReply);
     }
 
     public static function boot()

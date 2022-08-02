@@ -25,9 +25,8 @@ class CommentController extends Controller
      */
     public function index()
     {
-        // $comments = $this->model->paginate(20);
-        $comments = $this->model->with(['replies.replies'])->paginate(20);
-
+        $comments = $this->model->with(['replies.subReplies'])->latest()->paginate(20);
+        
         return json(['comments' => new CommentCollection($comments)], "comments gotten");
     }
 
@@ -41,19 +40,5 @@ class CommentController extends Controller
         $comment = $this->model->create($request->validated());
 
         return json(['comment' => new CommentResource($comment)], 'comment created');
-    }
-
-    /**
-     * Create a reply for the specified comment.
-     *
-     * @param  \App\Comment  $comment
-     * @param  \App\Requests\CreateRepliesRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function createReply(Comment $comment, CreateRepliesRequest $request)
-    {
-        $reply = $comment->replies()->create($request->validated());
-
-        return json(['reply' => new ReplyResource($reply)], 'reply created');
     }
 }

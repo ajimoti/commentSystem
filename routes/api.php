@@ -14,9 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/comments', 'CommentController@index');
-Route::post('/comments', 'CommentController@create');
-Route::post('/comments/replies', 'CommentController@createReply');
+Route::prefix('comments')->group(function () {
+    Route::get('/', 'CommentController@index');
+    Route::post('/', 'CommentController@create');
+    Route::get('{comment}/replies', 'ReplyController@index');
+    Route::post('{comment}/replies', 'ReplyController@create');    
+});
 
-Route::get('/replies', 'CommentController@index');
-Route::post('/replies', 'CommentController@create');
+Route::prefix('replies')->group(function () {
+    Route::post('{reply}', 'ReplyController@createSubReply'); 
+    Route::get('{reply}', 'ReplyController@getSubReplies'); 
+});
+

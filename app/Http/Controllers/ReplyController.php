@@ -26,26 +26,53 @@ class ReplyController extends Controller
      */
     public function index(Comment $comment)
     {
-        $replies = $comment->replies()->with('replies')->paginate(20);
+        $replies = $comment->replies()->with('subReplies')->latest()->paginate(20);
 
         return json(['replies' => new ReplyCollection($replies)], 'replies gotten');
     }
 
     /**
-     * Create a reply for the specified reply.
+     * Create a reply for the specified comment.
+     *
+     * @param  \App\Comment  $comment
+     * @param  \App\Requests\CreateRepliesRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function create(Comment $comment, CreateRepliesRequest $request)
+    {
+        $reply = $comment->replies()->create($request->validated());
+
+        return json(['reply' => new ReplyResource($reply)], 'reply created');
+    }
+
+    /**
+     * Create a sub reply for the specified reply.
      *
      * @param  \App\Reply  $reply
      * @param  \App\Requests\CreateRepliesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function create(Reply $reply, CreateRepliesRequest $request)
+    public function createSubReply(Reply $reply, CreateRepliesRequest $request)
     {
-        if ($reply->comment->comment) {
-            return message("You cannot reply a sub reply", 400);
+        if ($reply->isSubReply()) {
+            return message("you cannot reply a sub reply", 405);
         }
 
-        $reply = $reply->replies()->create($request->validated());
+        $reply = $reply->subReplies()->create($request->validated());
 
         return json(['reply' => new ReplyResource($reply)], 'reply created');
+    }
+
+    /**
+     * Create a sub reply for the specified reply.
+     *
+     * @param  \App\Reply  $reply
+     * @return \Illuminate\Http\Response
+     */
+    public function getSubReplies(Reply $reply)
+    {
+        $subReplies = $reply->subReplies()->latest()->paginate(20);
+
+        return json(['sub_replies' => new ReplyCollection($subReplies)], 'sub replies gotten');
     }
 }

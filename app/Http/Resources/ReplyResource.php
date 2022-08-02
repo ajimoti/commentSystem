@@ -18,9 +18,10 @@ class ReplyResource extends Resource
             'id' => $this->id,
             'user_name' => $this->user_name,
             'body' => $this->body,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'replies' => $this->when($this->replies, ReplyResource::collection($this->replies)),
+            'created_at' => $this->created_at->toDateTimeString(),
+            'created_at_humanized' => $this->updated_at->diffForHumans(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
+            'sub_replies' => $this->when($this->subReplies, ReplyResource::collection($this->subReplies)),
         ];
     }
 }
