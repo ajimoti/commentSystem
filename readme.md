@@ -1,5 +1,5 @@
 # Comment System
 
 ## Information:
-- Postman collection:
+- Postman collection: https://documenter.getpostman.com/view/2842523/UzkWWG1c
 
