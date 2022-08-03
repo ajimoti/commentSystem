@@ -144,4 +144,34 @@ class ReplyTest extends TestCase
                 'sub_replies' => $reply->subReplies,
             ]);
     }
+
+    /**
+     * Create replies.
+     * Ensure it throws an error for the fourth layer reply
+     *
+     * @return void
+     */
+    public function testCreateReply_throwsErrorsForFourthLayerReply()
+    {
+        $comment = factory(\App\Comment::class)->create();
+        $reply = $comment->replies()->create(factory(\App\Reply::class)->make()->toArray());
+        $subReply = factory(\App\Reply::class)->make();
+
+        $subReply = $reply->subReplies()->create($subReply->toArray());
+
+        $response = $this->post("api/replies/{$subReply->id}", [
+            'user_name' => $reply->user_name,
+            'body' => $reply->body,
+        ]);
+
+        $response->assertStatus(405)
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data'
+            ])
+            ->assertJsonFragment([
+                'message' => "you cannot reply a sub reply"
+            ]);
+    }
 }
